@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -30,12 +29,10 @@ import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKAttachments;
-import com.vk.sdk.util.VKUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class Publicator extends AppCompatActivity
@@ -68,7 +65,6 @@ public class Publicator extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        /////////////////////////////////////////////////
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -81,10 +77,6 @@ public class Publicator extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        ////////////////////////////////////////////////
-        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-        Log.v("Fingerprint is: ", Arrays.toString(fingerprints));
-        //////////////////////////////////////////////// Сертификат уже получен, пока что не нужно
 
         img1 = findViewById(R.id.img_1);
         img2 = findViewById(R.id.img_2);
@@ -113,7 +105,6 @@ public class Publicator extends AppCompatActivity
 
         } else {
             UserSearch();
-
             TargetDraw(finded_people);
 
             ButtonOnClickListener();
@@ -151,7 +142,6 @@ public class Publicator extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        // BeforeStartCheck();
     }
 
     public void ImageOnClickListener() {
@@ -236,7 +226,14 @@ public class Publicator extends AppCompatActivity
 
     }
 
-    public void TargetDraw(VKResponse response) { // убрать параметр VkRespnse и обращаться напрямую
+    public void TargetDraw(VKResponse response) { // TODO убрать параметр VkRespnse и обращаться напрямую
+
+        img1.setImageResource(android.R.color.transparent);
+        img2.setImageResource(android.R.color.transparent);
+        img3.setImageResource(android.R.color.transparent);
+        img4.setImageResource(android.R.color.transparent);
+        url = url1 = url2 = url3 = null;
+
         attachments.clear();
         final int photo_count = 4;
         GetCountDelayPosts();
@@ -263,7 +260,7 @@ public class Publicator extends AppCompatActivity
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                JSONObject photo0; // убрать лишние объекты, можно обойтись одним !!! Убрал
+                JSONObject photo0; // TODO убрать лишние объекты, можно обойтись одним !!! Убрал
                 try {
                     photo0 = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(0);
                     url = photo0.getString("photo_604");
@@ -296,7 +293,6 @@ public class Publicator extends AppCompatActivity
     {
         final int[] admins = {25291090, 57211825};
 
-
         for (int i = 0; i < admins.length; i++) {
             if (admins[i] == Integer.parseInt(VKAccessToken.currentToken().userId)) return true;
         }
@@ -326,7 +322,6 @@ public class Publicator extends AppCompatActivity
                 _user_online = data.getBooleanExtra("Online", true);
                 _user_popular = data.getByteExtra("Popular", (byte) 0);
                 UserSearch();
-
             }
 
         }
@@ -345,10 +340,8 @@ public class Publicator extends AppCompatActivity
         });
     }
 
-
     public void UserSearch() {
 
-// 1000 человек
         users_search = VKApi.users().search(VKParameters.from(
                 VKApiConst.SEX, 1,
                 VKApiConst.AGE_FROM, _age_from,
@@ -371,18 +364,12 @@ public class Publicator extends AppCompatActivity
         });
 
 
-    }// наполняет массивы users_id id-шн
+    }
 
     public void ButtonOnClickListener() {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                img1.setImageResource(android.R.color.transparent);
-                img2.setImageResource(android.R.color.transparent);
-                img3.setImageResource(android.R.color.transparent);
-                img4.setImageResource(android.R.color.transparent);
-
 
                 TargetDraw(finded_people);
                 Snackbar.make(v, "Загружаю следующую девушку", Snackbar.LENGTH_SHORT)
@@ -401,7 +388,7 @@ public class Publicator extends AppCompatActivity
     public void PostProcess() {
 
 
-        publish_date += 3600;
+        publish_date += 1800;
         VKRequest post;
 
         if (isUserAdmin()) {
@@ -435,12 +422,9 @@ public class Publicator extends AppCompatActivity
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-                publish_date += 1800;
-                PostProcess(); // может уйти в бесконечность, исправить!!! Важно
-               /* Toast toast = Toast.makeText(getApplicationContext(),
-                        "Ошибка публикации!" + error.toString(), Toast.LENGTH_LONG);
-                toast.show();
-                */
+                publish_date += 3600;
+                PostProcess(); //  TODO может уйти в бесконечность, исправить!!! Важно
+
             }
         });
     }
