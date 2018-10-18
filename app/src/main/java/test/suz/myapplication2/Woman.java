@@ -5,6 +5,9 @@
 
 package test.suz.myapplication2;
 
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
@@ -17,15 +20,14 @@ import org.json.JSONObject;
 
 public class Woman {
 
-    String[] url_photo604 = null;
+    String[] url_photo604 = new String[4];
     VKAttachments attachments = new VKAttachments();
     private int id;
     private String last_name;
     private String first_name;
-    private int photo_count = 4;
-    private VKRequest user_photos = null;
+    private int photoCount = 4;
 
-    public Woman(VKResponse response1000, int index) {
+    public Woman(VKResponse response1000, int index, final ImageView[] imgs, final byte Drawable) {
 
         try {
             JSONObject temp = response1000.json.getJSONObject("response").getJSONArray("items").getJSONObject(index);
@@ -38,38 +40,42 @@ public class Woman {
             e.printStackTrace();
         }
 
-        user_photos = new VKRequest("photos.get", VKParameters.from(
+        VKRequest userPhotos = new VKRequest("photos.get", VKParameters.from(
                 VKApiConst.OWNER_ID, id,
                 VKApiConst.REV, 1,
                 VKApiConst.ALBUM_ID, "profile",
-                VKApiConst.COUNT, photo_count,
+                VKApiConst.COUNT, photoCount,
                 VKApiConst.EXTENDED, 0
         ));
-        user_photos.executeWithListener(new VKRequest.VKRequestListener() {
+        userPhotos.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
                 JSONObject photo; // TODO убрать лишние объекты, можно обойтись одним !!! Убрал
                 try {
-                    photo = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(0);
-                    url_photo604[0] = photo.getString("photo_604");
-                    attachments.add(new VKApiPhoto(photo));
-                    //////////////////////////////////////////
-                    photo = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(1);
-                    url_photo604[1] = photo.getString("photo_604");
-                    attachments.add(new VKApiPhoto(photo));
-                    //////////////////////////////////////////
-                    photo = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(2);
-                    url_photo604[2] = photo.getString("photo_604");
-                    attachments.add(new VKApiPhoto(photo));
-                    //////////////////////////////////////////
-                    photo = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(3);
-                    url_photo604[3] = photo.getString("photo_604");
-                    attachments.add(new VKApiPhoto(photo));
+
+                    for (int i = 0; i < photoCount; i++) {
+                        photo = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(i);
+                        url_photo604[i] = photo.getString("photo_604");
+                        attachments.add(new VKApiPhoto(photo));
+                        if (Drawable == 1)
+                            Picasso.get().load(url_photo604[i]).into(imgs[i]);
+                    }
+
                 } catch (JSONException ignored) {
                 }
             }
         });
+    }
+
+    public VKAttachments getVkAttachments() {
+        return attachments;
+    }
+
+    public void Show(ImageView[] imgs) {
+        for (int i = 0; i < photoCount; i++)
+            Picasso.get().load(url_photo604[i]).into(imgs[i]);
+
     }
 
     public int getId() {

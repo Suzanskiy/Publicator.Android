@@ -17,7 +17,7 @@
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
         <activity
-            android:name=".search_settings"
+            android:name=".SearchSettings"
             android:label="@string/title_activity_search_settings"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

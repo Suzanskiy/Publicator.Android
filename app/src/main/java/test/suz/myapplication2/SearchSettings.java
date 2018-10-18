@@ -2,7 +2,6 @@ package test.suz.myapplication2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -24,9 +23,7 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.GregorianCalendar;
-
-public class search_settings extends AppCompatActivity {
+public class SearchSettings extends AppCompatActivity {
 
     Switch user_online, swDelay;
     Switch user_popular;

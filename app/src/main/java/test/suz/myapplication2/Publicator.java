@@ -27,20 +27,22 @@ import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKAttachments;
+import com.vk.sdk.util.VKUtil;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Random;
 
 public class Publicator extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    final int girlsInUse = 500;
+    int buttonCounter = 0;
+
     long publish_date = System.currentTimeMillis() / 1000L;
     final int groupId = -159059779;
-    int owner_id = 0;
+
     int _age_from = 18;
     int _age_to = 22;
     int _user_popular = 0;
@@ -51,16 +53,15 @@ public class Publicator extends AppCompatActivity
     VKRequest users_search = null;
     VKResponse finded_people = null;
 
-    JSONObject one_user = null;
-    VKRequest user_photos = null;
-    ImageView img1, img2, img3, img4;
+    ImageView[] imageViews = new ImageView[4];
 
     String url, url1, url2, url3 = null;
-    String first_name, last_name;
+
 
     VKAttachments attachments = new VKAttachments();
 
     Button btnNext, btnPost;
+    Woman beautiful;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,16 +79,16 @@ public class Publicator extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        img1 = findViewById(R.id.img_1);
-        img2 = findViewById(R.id.img_2);
-        img3 = findViewById(R.id.img_3);
-        img4 = findViewById(R.id.img_4);
+        imageViews[0] = findViewById(R.id.img_1);
+        imageViews[1] = findViewById(R.id.img_2);
+        imageViews[2] = findViewById(R.id.img_3);
+        imageViews[3] = findViewById(R.id.img_4);
 
         btnNext = findViewById(R.id.btn_no);
         btnPost = findViewById(R.id.btn_yes);
-
+        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
         BeforeStartCheck();
-
+        GetCountDelayPosts();
     }
 
     @Override
@@ -114,29 +115,36 @@ public class Publicator extends AppCompatActivity
     }
 
     public void GetCountDelayPosts() {
+        if (buttonCounter == 0) {
+            VKRequest count = VKApi.wall().get(VKParameters.from(
 
-        VKRequest count = VKApi.wall().get(VKParameters.from(
+                    VKApiConst.OWNER_ID, groupId,
+                    "filter", "postponed",
+                    VKApiConst.COUNT, 1,
+                    VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken()
 
-                VKApiConst.OWNER_ID, groupId,
-                "filter", "postponed",
-                VKApiConst.COUNT, 1,
-                VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken()
+            ));
+            count.executeWithListener(new VKRequest.VKRequestListener() {
+                @Override
+                public void onComplete(VKResponse response) {
+                    super.onComplete(response);
+                    try {
+                        buttonCounter = (int) response.json.getJSONObject("response").get("count");
+                        btnPost.setText("Post [" + buttonCounter + "]");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
-        ));
-        count.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-                try {
-                    int count = (int) response.json.getJSONObject("response").get("count");
-                    btnPost.setText("Post [" + count + "]");
-                } catch (JSONException e) {
-                    e.printStackTrace();
+
                 }
 
+            });
+        } else {
+            buttonCounter++;
+            btnPost.setText("Post [" + buttonCounter + "]");
 
-            }
-        });
+        }
+
     }
 
     @Override
@@ -146,145 +154,54 @@ public class Publicator extends AppCompatActivity
 
     public void ImageOnClickListener() {
 
-        img1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog;
-                dialog = new Dialog(Publicator.this);
+        ////////////////////////////////
+        for (int i = 0; i < imageViews.length; i++) {
+            final int finalI = i;
+            imageViews[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-                dialog.setContentView(R.layout.dialog_view);
-                ImageView imageZoom = dialog.findViewById(R.id.Image_zoom);
+                    final Dialog dialog;
+                    dialog = new Dialog(Publicator.this);
 
-                Picasso.get().load(url).into(imageZoom);
+                    dialog.setContentView(R.layout.dialog_view);
+                    ImageView imageZoom = dialog.findViewById(R.id.Image_zoom);
+                    Picasso.get().load(beautiful.url_photo604[finalI]).into(imageZoom);
+                    dialog.show();
+                    imageZoom.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
 
-                dialog.show();
-                imageZoom.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-        img2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog;
-                dialog = new Dialog(Publicator.this);
+                }
+            });
+        }
 
-                dialog.setContentView(R.layout.dialog_view);
-                ImageView imageZoom = dialog.findViewById(R.id.Image_zoom);
-                Picasso.get().load(url1).into(imageZoom);
-
-                dialog.show();
-                imageZoom.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-        img3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog;
-                dialog = new Dialog(Publicator.this);
-
-                dialog.setContentView(R.layout.dialog_view);
-                ImageView imageZoom = dialog.findViewById(R.id.Image_zoom);
-                Picasso.get().load(url2).into(imageZoom);
-
-                dialog.show();
-                imageZoom.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-        img4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog;
-                dialog = new Dialog(Publicator.this);
-
-                dialog.setContentView(R.layout.dialog_view);
-                ImageView imageZoom = dialog.findViewById(R.id.Image_zoom);
-                Picasso.get().load(url3).into(imageZoom);
-
-                dialog.show();
-                imageZoom.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
 
     }
 
     public void TargetDraw(VKResponse response) { // TODO убрать параметр VkRespnse и обращаться напрямую
 
-        img1.setImageResource(android.R.color.transparent);
-        img2.setImageResource(android.R.color.transparent);
-        img3.setImageResource(android.R.color.transparent);
-        img4.setImageResource(android.R.color.transparent);
-        url = url1 = url2 = url3 = null;
+//        for (int i = 0; i < imageViews.length; i++) {
+//            imageViews[i].setImageResource(android.R.color.transparent);
+//        }
 
         attachments.clear();
-        final int photo_count = 4;
-        GetCountDelayPosts();
 
-        try {
-            one_user = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(r.nextInt(1000));
-            if (one_user != null) {
-                owner_id = one_user.getInt("id");
-                last_name = one_user.getString("last_name");
-                first_name = one_user.getString("first_name");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (beautiful != null)
+            beautiful.Show(imageViews);
+        else {
+
+            beautiful = new Woman(response, r.nextInt(girlsInUse), imageViews, (byte) 1);
+
         }
-        user_photos = new VKRequest("photos.get", VKParameters.from(
-                VKApiConst.OWNER_ID, owner_id,
-                VKApiConst.REV, 1,
-                VKApiConst.ALBUM_ID, "profile",
-                VKApiConst.COUNT, photo_count,
-                VKApiConst.EXTENDED, 0
+        attachments = beautiful.getVkAttachments();
 
-        ));
-        user_photos.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-                JSONObject photo0; // TODO убрать лишние объекты, можно обойтись одним !!! Убрал
-                try {
-                    photo0 = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(0);
-                    url = photo0.getString("photo_604");
-                    Picasso.get().load(url).into(img1);
-                    attachments.add(new VKApiPhoto(photo0));
-                    //////////////////////////////////////////
-                    photo0 = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(1);
-                    url1 = photo0.getString("photo_604");
-                    Picasso.get().load(url1).into(img2);
-                    attachments.add(new VKApiPhoto(photo0));
-                    //////////////////////////////////////////
-                    photo0 = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(2);
-                    url2 = photo0.getString("photo_604");
-                    Picasso.get().load(url2).into(img3);
-                    attachments.add(new VKApiPhoto(photo0));
-                    //////////////////////////////////////////
-                    photo0 = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(3);
-                    url3 = photo0.getString("photo_604");
-                    Picasso.get().load(url3).into(img4);
-                    attachments.add(new VKApiPhoto(photo0));
-                } catch (JSONException ignored) {
-                }
-            }
-        });
+        beautiful = new Woman(response, r.nextInt(girlsInUse), imageViews, (byte) 0);
+
+
 
     }
 
@@ -349,7 +266,7 @@ public class Publicator extends AppCompatActivity
                 VKApiConst.AGE_TO, _age_to,
                 VKApiConst.HAS_PHOTO, 1,
                 VKApiConst.SORT, _user_popular,
-                VKApiConst.COUNT, 1000
+                VKApiConst.COUNT, girlsInUse
                 // рандомизировать по Birtday запроc
                 )
 
@@ -361,6 +278,7 @@ public class Publicator extends AppCompatActivity
                 super.onComplete(response);
 
                 finded_people = response;
+
             }
         });
 
@@ -387,7 +305,7 @@ public class Publicator extends AppCompatActivity
     }
 
     public void PostProcess() {
-
+        GetCountDelayPosts();
         publish_date += 1800;
         VKRequest post;
 
@@ -396,14 +314,14 @@ public class Publicator extends AppCompatActivity
                     VKApiConst.PUBLISH_DATE, publish_date,
                     VKApiConst.OWNER_ID, groupId,
                     VKApiConst.FROM_GROUP, 0,
-                    VKApiConst.MESSAGE, "Model: @id" + owner_id + "(" + first_name + " " + last_name + ") <3 \n ___________ \n  Ну Вау. ",
+                    VKApiConst.MESSAGE, "Model: @id" + beautiful.getId() + "(" + beautiful.getFirst_name() + " " + beautiful.getLast_name() + ") <3 \n ___________ \n  Ну Вау. ",
                     VKApiConst.ATTACHMENTS, attachments
             ));
         } else
             post = VKApi.wall().post(VKParameters.from(
                     VKApiConst.OWNER_ID, groupId,
                     VKApiConst.FROM_GROUP, 0,
-                    VKApiConst.MESSAGE, "Model: @id" + owner_id + "(" + first_name + " " + last_name + ") <3 \n ___________ \n  Ну Вау. ",
+                    VKApiConst.MESSAGE, "Model: @id" + beautiful.getId() + "(" + beautiful.getFirst_name() + " " + beautiful.getLast_name() + ") <3 \n ___________ \n  Ну Вау. ",
                     VKApiConst.ATTACHMENTS, attachments
             ));
 
@@ -446,7 +364,7 @@ public class Publicator extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_manage:
-                Intent search_intent = new Intent(this, search_settings.class);
+                Intent search_intent = new Intent(this, SearchSettings.class);
                 startActivityForResult(search_intent, 1);
                 break;
             case R.id.nav_exit:
