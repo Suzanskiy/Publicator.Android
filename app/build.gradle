@@ -34,5 +34,4 @@ dependencies {
     implementation project(':vksdk_library')
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.android.support:cardview-v7:27.1.1'
-    implementation 'com.google.android:flexbox:1.1.0'
 }

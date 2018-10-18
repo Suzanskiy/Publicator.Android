@@ -291,6 +291,7 @@ public class Publicator extends AppCompatActivity
     public boolean isUserAdmin()
 
     {
+
         final int[] admins = {25291090, 57211825};
 
         for (int i = 0; i < admins.length; i++) {
@@ -386,7 +387,6 @@ public class Publicator extends AppCompatActivity
     }
 
     public void PostProcess() {
-
 
         publish_date += 1800;
         VKRequest post;
