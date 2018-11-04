@@ -7,6 +7,7 @@ package test.suz.myapplication2;
 
 import android.widget.ImageView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
@@ -27,7 +28,8 @@ public class Woman {
     private String first_name;
     private int photoCount = 4;
 
-    public Woman(VKResponse response1000, int index, final ImageView[] imgs, final byte Drawable) {
+
+    public Woman(VKResponse response1000, int index, final ImageView[] imgs, final boolean draw) {
 
         try {
             JSONObject temp = response1000.json.getJSONObject("response").getJSONArray("items").getJSONObject(index);
@@ -58,8 +60,20 @@ public class Woman {
                         photo = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(i);
                         url_photo604[i] = photo.getString("photo_604");
                         attachments.add(new VKApiPhoto(photo));
-                        if (Drawable == 1)
-                            Picasso.get().load(url_photo604[i]).into(imgs[i]);
+
+                        Picasso.get().load(url_photo604[i]).fetch(new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                if (draw)
+                                    Show(imgs);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+
+                            }
+                        });
+
                     }
 
                 } catch (JSONException ignored) {

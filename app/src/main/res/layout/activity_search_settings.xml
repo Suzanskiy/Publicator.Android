@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018.
+  ~ Sergey Suzanskyi
+  -->
+
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,6 +21,6 @@
 
     <include
         android:id="@+id/include"
-        layout="@layout/content_search_settings" />
+        layout="@layout/content_search_settings3" />
 
 </android.support.design.widget.CoordinatorLayout>

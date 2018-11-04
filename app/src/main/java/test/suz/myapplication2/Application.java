@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018.
+ * Sergey Suzanskyi
+ */
+
 package test.suz.myapplication2;
 
 import com.vk.sdk.VKAccessToken;
@@ -9,7 +14,7 @@ public class Application extends android.app.Application {
         @Override
         public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
             if (newToken == null) {
-// VKAccessToken is invalid
+                VKSdk.logout();
             }
         }
     };
@@ -18,6 +23,8 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         vkAccessTokenTracker.startTracking();
+
         VKSdk.initialize(this);
     }
+
 }

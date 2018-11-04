@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2018.
+ * Sergey Suzanskyi
+ */
+
 package test.suz.myapplication2;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -28,40 +34,55 @@ import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKAttachments;
-import com.vk.sdk.util.VKUtil;
 
 import org.json.JSONException;
 
 import java.util.Random;
 
-public class Publicator extends AppCompatActivity
+public class Publication extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    final int girlsInUse = 500;
+    final int girlsInUse = 800;
+    int start_pos = 0;
     int buttonCounter = 0;
 
     long publish_date = System.currentTimeMillis() / 1000L;
     final int groupId = -159059779;
-
-    int _age_from = 18;
-    int _age_to = 22;
+    int _age_from = 16;
+    int _age_to = 25;
     int _user_popular = 0;
-    boolean _user_online = true;
+    boolean _user_online = false;
 
     Random r = new Random();
 
     VKRequest users_search = null;
-    VKResponse finded_people = null;
+    VKResponse f_people = null;
 
     ImageView[] imageViews = new ImageView[4];
 
-    String url, url1, url2, url3 = null;
+    String[] photoUrls = new String[4];
 
 
     VKAttachments attachments = new VKAttachments();
 
     Button btnNext, btnPost;
     Woman beautiful;
+
+    int girlId;
+    String fName, lName;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        r = null;
+        users_search = null;
+        f_people = null;
+        imageViews = null;
+        photoUrls = null;
+        attachments = null;
+        btnNext = btnPost = null;
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +107,9 @@ public class Publicator extends AppCompatActivity
 
         btnNext = findViewById(R.id.btn_no);
         btnPost = findViewById(R.id.btn_yes);
-        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+        // String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+
+
         BeforeStartCheck();
         GetCountDelayPosts();
     }
@@ -98,7 +121,7 @@ public class Publicator extends AppCompatActivity
 
     public void BeforeStartCheck() {
         if (!VKSdk.isLoggedIn()) {
-            VKSdk.login(Publicator.this, VKScope.WALL, VKScope.NOHTTPS, VKScope.FRIENDS);
+            VKSdk.login(Publication.this, VKScope.WALL, VKScope.NOHTTPS, VKScope.FRIENDS);
 
             Toast toast = Toast.makeText(getApplicationContext(),
                     "Пожалуйста, авторизуйтесь!", Toast.LENGTH_LONG);
@@ -106,7 +129,7 @@ public class Publicator extends AppCompatActivity
 
         } else {
             UserSearch();
-            TargetDraw(finded_people);
+            TargetDraw();
 
             ButtonOnClickListener();
             ImageOnClickListener();
@@ -156,17 +179,18 @@ public class Publicator extends AppCompatActivity
 
         ////////////////////////////////
         for (int i = 0; i < imageViews.length; i++) {
-            final int finalI = i;
+
+            final int _i = i;
             imageViews[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     final Dialog dialog;
-                    dialog = new Dialog(Publicator.this);
+                    dialog = new Dialog(Publication.this);
 
                     dialog.setContentView(R.layout.dialog_view);
                     ImageView imageZoom = dialog.findViewById(R.id.Image_zoom);
-                    Picasso.get().load(beautiful.url_photo604[finalI]).into(imageZoom);
+                    Picasso.get().load(photoUrls[_i]).into(imageZoom);
                     dialog.show();
                     imageZoom.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -182,25 +206,32 @@ public class Publicator extends AppCompatActivity
 
     }
 
-    public void TargetDraw(VKResponse response) { // TODO убрать параметр VkRespnse и обращаться напрямую
+    public void TargetDraw() {
 
-//        for (int i = 0; i < imageViews.length; i++) {
-//            imageViews[i].setImageResource(android.R.color.transparent);
-//        }
+        for (ImageView imageView : imageViews) {
+            imageView.setImageResource(android.R.color.transparent);
+        }
 
         attachments.clear();
 
-        if (beautiful != null)
+        if (beautiful != null && start_pos < girlsInUse - 1) {
             beautiful.Show(imageViews);
-        else {
 
-            beautiful = new Woman(response, r.nextInt(girlsInUse), imageViews, (byte) 1);
+        } else {
+            start_pos = 0;
+            beautiful = new Woman(f_people, start_pos, imageViews, true);
+
 
         }
+        photoUrls = beautiful.url_photo604;
+        fName = beautiful.getFirst_name();
+        lName = beautiful.getLast_name();
+        girlId = beautiful.getId();
         attachments = beautiful.getVkAttachments();
+        start_pos++;
 
-        beautiful = new Woman(response, r.nextInt(girlsInUse), imageViews, (byte) 0);
 
+        beautiful = new Woman(f_people, start_pos, imageViews, false);
 
 
     }
@@ -211,8 +242,8 @@ public class Publicator extends AppCompatActivity
 
         final int[] admins = {25291090, 57211825};
 
-        for (int i = 0; i < admins.length; i++) {
-            if (admins[i] == Integer.parseInt(VKAccessToken.currentToken().userId)) return true;
+        for (int admin : admins) {
+            if (admin == Integer.parseInt(VKAccessToken.currentToken().userId)) return true;
         }
         return false;
     }
@@ -239,6 +270,7 @@ public class Publicator extends AppCompatActivity
 
                 _user_online = data.getBooleanExtra("Online", true);
                 _user_popular = data.getByteExtra("Popular", (byte) 0);
+                start_pos = 0;
                 UserSearch();
             }
 
@@ -266,8 +298,9 @@ public class Publicator extends AppCompatActivity
                 VKApiConst.AGE_TO, _age_to,
                 VKApiConst.HAS_PHOTO, 1,
                 VKApiConst.SORT, _user_popular,
-                VKApiConst.COUNT, girlsInUse
+                VKApiConst.COUNT, girlsInUse,
                 // рандомизировать по Birtday запроc
+                VKApiConst.BIRTH_DAY, r.nextInt(28)
                 )
 
         );
@@ -277,7 +310,8 @@ public class Publicator extends AppCompatActivity
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
 
-                finded_people = response;
+                f_people = response;
+                TargetDraw();
 
             }
         });
@@ -289,10 +323,10 @@ public class Publicator extends AppCompatActivity
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                TargetDraw(finded_people);
-                Snackbar.make(v, "Загружаю следующую девушку", Snackbar.LENGTH_SHORT)
+                Snackbar.make(v, " Model: " + beautiful.getFirst_name() + " " + beautiful.getLast_name() + "  <3", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
+                TargetDraw();
+
 
             }
         });
@@ -314,14 +348,14 @@ public class Publicator extends AppCompatActivity
                     VKApiConst.PUBLISH_DATE, publish_date,
                     VKApiConst.OWNER_ID, groupId,
                     VKApiConst.FROM_GROUP, 0,
-                    VKApiConst.MESSAGE, "Model: @id" + beautiful.getId() + "(" + beautiful.getFirst_name() + " " + beautiful.getLast_name() + ") <3 \n ___________ \n  Ну Вау. ",
+                    VKApiConst.MESSAGE, "Model: @id" + girlId + "(" + fName + " " + lName + ") <3 \n ___________ \n  Ну Вау. ",
                     VKApiConst.ATTACHMENTS, attachments
             ));
         } else
             post = VKApi.wall().post(VKParameters.from(
                     VKApiConst.OWNER_ID, groupId,
                     VKApiConst.FROM_GROUP, 0,
-                    VKApiConst.MESSAGE, "Model: @id" + beautiful.getId() + "(" + beautiful.getFirst_name() + " " + beautiful.getLast_name() + ") <3 \n ___________ \n  Ну Вау. ",
+                    VKApiConst.MESSAGE, "Model: @id" + girlId + "(" + fName + " " + lName + ") <3 \n ___________ \n  Ну Вау. ",
                     VKApiConst.ATTACHMENTS, attachments
             ));
 
@@ -334,7 +368,7 @@ public class Publicator extends AppCompatActivity
                 Toast toast = Toast.makeText(getApplicationContext(),
                         "Добавлено в очередь!", Toast.LENGTH_LONG);
                 toast.show();
-                TargetDraw(finded_people);
+                TargetDraw();
             }
 
             @Override
@@ -358,7 +392,7 @@ public class Publicator extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
