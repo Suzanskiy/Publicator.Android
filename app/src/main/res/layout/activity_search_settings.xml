@@ -21,6 +21,6 @@
 
     <include
         android:id="@+id/include"
-        layout="@layout/content_search_settings3" />
+        layout="@layout/content_search_settings" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018.
+ * Sergey Suzanskyi
+ */
+
 apply plugin: 'com.android.application'
 
 android {
@@ -6,10 +11,10 @@ android {
         applicationId "test.suz.myapplication2"
         minSdkVersion 19
         targetSdkVersion 27
-        versionName '1.05'
+        versionName '1.06'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-        versionCode 6
+        versionCode 7
     }
     buildTypes {
         release {

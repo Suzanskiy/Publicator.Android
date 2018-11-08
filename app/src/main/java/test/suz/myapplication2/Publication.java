@@ -7,6 +7,7 @@ package test.suz.myapplication2;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -39,7 +40,7 @@ import org.json.JSONException;
 
 import java.util.Random;
 
-public class Publication extends AppCompatActivity
+public final class Publication extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     final int girlsInUse = 800;
@@ -81,7 +82,6 @@ public class Publication extends AppCompatActivity
         photoUrls = null;
         attachments = null;
         btnNext = btnPost = null;
-
     }
 
     @Override
@@ -109,9 +109,8 @@ public class Publication extends AppCompatActivity
         btnPost = findViewById(R.id.btn_yes);
         // String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
 
-
         BeforeStartCheck();
-        GetCountDelayPosts();
+
     }
 
     @Override
@@ -126,7 +125,6 @@ public class Publication extends AppCompatActivity
             Toast toast = Toast.makeText(getApplicationContext(),
                     "Пожалуйста, авторизуйтесь!", Toast.LENGTH_LONG);
             toast.show();
-
         } else {
             UserSearch();
             TargetDraw();
@@ -138,35 +136,25 @@ public class Publication extends AppCompatActivity
     }
 
     public void GetCountDelayPosts() {
-        if (buttonCounter == 0) {
-            VKRequest count = VKApi.wall().get(VKParameters.from(
 
-                    VKApiConst.OWNER_ID, groupId,
-                    "filter", "postponed",
-                    VKApiConst.COUNT, 1,
-                    VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken()
-
-            ));
-            count.executeWithListener(new VKRequest.VKRequestListener() {
-                @Override
-                public void onComplete(VKResponse response) {
-                    super.onComplete(response);
-                    try {
-                        buttonCounter = (int) response.json.getJSONObject("response").get("count");
-                        btnPost.setText("Post [" + buttonCounter + "]");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-
+        VKRequest count = VKApi.wall().get(VKParameters.from(
+                VKApiConst.OWNER_ID, groupId,
+                "filter", "postponed",
+                VKApiConst.COUNT, 1,
+                VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken()
+        ));
+        count.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                try {
+                    buttonCounter = (int) response.json.getJSONObject("response").get("count");
+                    btnPost.setText("Post [" + buttonCounter + "]");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-
-            });
-        } else {
-            buttonCounter++;
-            btnPost.setText("Post [" + buttonCounter + "]");
-
-        }
+            }
+        });
 
     }
 
@@ -177,7 +165,6 @@ public class Publication extends AppCompatActivity
 
     public void ImageOnClickListener() {
 
-        ////////////////////////////////
         for (int i = 0; i < imageViews.length; i++) {
 
             final int _i = i;
@@ -202,8 +189,6 @@ public class Publication extends AppCompatActivity
                 }
             });
         }
-
-
     }
 
     public void TargetDraw() {
@@ -211,17 +196,12 @@ public class Publication extends AppCompatActivity
         for (ImageView imageView : imageViews) {
             imageView.setImageResource(android.R.color.transparent);
         }
-
         attachments.clear();
-
         if (beautiful != null && start_pos < girlsInUse - 1) {
             beautiful.Show(imageViews);
-
         } else {
             start_pos = 0;
             beautiful = new Woman(f_people, start_pos, imageViews, true);
-
-
         }
         photoUrls = beautiful.url_photo604;
         fName = beautiful.getFirst_name();
@@ -229,19 +209,11 @@ public class Publication extends AppCompatActivity
         girlId = beautiful.getId();
         attachments = beautiful.getVkAttachments();
         start_pos++;
-
-
         beautiful = new Woman(f_people, start_pos, imageViews, false);
-
-
     }
 
-    public boolean isUserAdmin()
-
-    {
-
+    public boolean isUserAdmin() {
         final int[] admins = {25291090, 57211825};
-
         for (int admin : admins) {
             if (admin == Integer.parseInt(VKAccessToken.currentToken().userId)) return true;
         }
@@ -257,11 +229,6 @@ public class Publication extends AppCompatActivity
                 _age_from = Integer.parseInt(data.getStringExtra("Age_from"));
                 _age_to = Integer.parseInt(data.getStringExtra("Age_to"));
 
-
-               /* a = a + b;
-                b = a —b;
-                a = a —b;
-               */
                 if (_age_from > _age_to) {
                     _age_from = _age_from + _age_to;
                     _age_to = _age_from - _age_to;
@@ -275,7 +242,6 @@ public class Publication extends AppCompatActivity
             }
 
         }
-
         VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
@@ -309,14 +275,10 @@ public class Publication extends AppCompatActivity
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-
                 f_people = response;
                 TargetDraw();
-
             }
         });
-
-
     }
 
     public void ButtonOnClickListener() {
@@ -326,57 +288,12 @@ public class Publication extends AppCompatActivity
                 Snackbar.make(v, " Model: " + beautiful.getFirst_name() + " " + beautiful.getLast_name() + "  <3", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
                 TargetDraw();
-
-
             }
         });
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PostProcess();
-            }
-        });
-    }
-
-    public void PostProcess() {
-        GetCountDelayPosts();
-        publish_date += 1800;
-        VKRequest post;
-
-        if (isUserAdmin()) {
-            post = VKApi.wall().post(VKParameters.from(
-                    VKApiConst.PUBLISH_DATE, publish_date,
-                    VKApiConst.OWNER_ID, groupId,
-                    VKApiConst.FROM_GROUP, 0,
-                    VKApiConst.MESSAGE, "Model: @id" + girlId + "(" + fName + " " + lName + ") <3 \n ___________ \n  Ну Вау. ",
-                    VKApiConst.ATTACHMENTS, attachments
-            ));
-        } else
-            post = VKApi.wall().post(VKParameters.from(
-                    VKApiConst.OWNER_ID, groupId,
-                    VKApiConst.FROM_GROUP, 0,
-                    VKApiConst.MESSAGE, "Model: @id" + girlId + "(" + fName + " " + lName + ") <3 \n ___________ \n  Ну Вау. ",
-                    VKApiConst.ATTACHMENTS, attachments
-            ));
-
-        post.executeWithListener(new VKRequest.VKRequestListener()
-
-        {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Добавлено в очередь!", Toast.LENGTH_LONG);
-                toast.show();
-                TargetDraw();
-            }
-
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-                publish_date += 3600;
-                PostProcess(); //  TODO может уйти в бесконечность, исправить!!! Важно
-
+                new PostProcess().execute();
             }
         });
     }
@@ -405,7 +322,16 @@ public class Publication extends AppCompatActivity
                 VKSdk.logout();
                 finish();
                 break;
-            case R.id.nav_send:
+            case R.id.nav_share:
+                final Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                String textToSend = "Смотри какие красивые девушки в сообществе vk.com/ny_vay";
+                intent.putExtra(Intent.EXTRA_TEXT, textToSend);
+                try {
+                    startActivity(Intent.createChooser(intent, "Описание действия"));
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(getApplicationContext(), "Some error", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
 
@@ -414,4 +340,54 @@ public class Publication extends AppCompatActivity
         return true;
     }
 
+
+    private class PostProcess extends AsyncTask<Void, Integer, Void> {
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            GetCountDelayPosts();
+            publish_date += 1800;
+            VKRequest post;
+
+            if (isUserAdmin()) {
+                post = VKApi.wall().post(VKParameters.from(
+                        VKApiConst.PUBLISH_DATE, publish_date,
+                        VKApiConst.OWNER_ID, groupId,
+                        VKApiConst.FROM_GROUP, 0,
+                        VKApiConst.MESSAGE, "Model: @id" + girlId + "(" + fName + " " + lName + ") <3 \n ___________ \n  Ну Вау. ",
+                        VKApiConst.ATTACHMENTS, attachments
+                ));
+            } else
+                post = VKApi.wall().post(VKParameters.from(
+                        VKApiConst.OWNER_ID, groupId,
+                        VKApiConst.FROM_GROUP, 0,
+                        VKApiConst.MESSAGE, "Model: @id" + girlId + "(" + fName + " " + lName + ") <3 \n ___________ \n  Ну Вау. ",
+                        VKApiConst.ATTACHMENTS, attachments
+                ));
+
+            post.executeWithListener(new VKRequest.VKRequestListener()
+
+            {
+                @Override
+                public void onComplete(VKResponse response) {
+                    super.onComplete(response);
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Добавлено в очередь!", Toast.LENGTH_LONG);
+                    toast.show();
+                    TargetDraw();
+                }
+
+                @Override
+                public void onError(VKError error) {
+                    super.onError(error);
+                    publish_date += 3600;
+                    new PostProcess().execute(); //
+                }
+            });
+            return null;
+        }
+
+    }
 }
+
