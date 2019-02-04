@@ -5,6 +5,7 @@
 
 package test.suz.myapplication2;
 
+import android.view.View;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
@@ -87,8 +88,10 @@ public class Woman {
     }
 
     public void Show(ImageView[] imgs) {
-        for (int i = 0; i < photoCount; i++)
+        for (int i = 0; i < photoCount; i++) {
+            imgs[i].setVisibility(View.VISIBLE);
             Picasso.get().load(url_photo604[i]).into(imgs[i]);
+        }
 
     }
 

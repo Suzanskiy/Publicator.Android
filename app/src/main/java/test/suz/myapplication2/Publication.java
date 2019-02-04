@@ -38,6 +38,7 @@ import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKAttachments;
 
+
 import org.json.JSONException;
 
 import java.util.Random;
@@ -45,7 +46,7 @@ import java.util.Random;
 public final class Publication extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    final int girlsInUse = 800;
+    final int girlsInUse = 500;
     int start_pos = 0;
     int buttonCounter = 0;
 
@@ -180,7 +181,7 @@ public final class Publication extends AppCompatActivity
             @Override
             public boolean onLongClick(View view) {
                 view.setVisibility(View.GONE);
-                attachments.remove(0);
+                attachments.set(0, null);
                 Toast.makeText(getApplicationContext(), "Photo has been deleted", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -189,7 +190,8 @@ public final class Publication extends AppCompatActivity
             @Override
             public boolean onLongClick(View view) {
                 view.setVisibility(View.GONE);
-                attachments.remove(1);
+                attachments.set(1, null);
+
                 Toast.makeText(getApplicationContext(), "Photo has been deleted", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -198,7 +200,7 @@ public final class Publication extends AppCompatActivity
             @Override
             public boolean onLongClick(View view) {
                 view.setVisibility(View.GONE);
-                attachments.remove(2);
+                attachments.set(2, null);
                 Toast.makeText(getApplicationContext(), "Photo has been deleted", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -207,7 +209,7 @@ public final class Publication extends AppCompatActivity
             @Override
             public boolean onLongClick(View view) {
                 view.setVisibility(View.GONE);
-                attachments.remove(3);
+                attachments.set(3, null);
                 Toast.makeText(getApplicationContext(), "Photo has been deleted", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -215,11 +217,21 @@ public final class Publication extends AppCompatActivity
 
 
     }
+    public void RemoveNullAttachment()
+    {
+        for ( VKAttachments.VKApiAttachment attach:attachments
+             ) {
+            if(attach==null)
+            {
+                attachments.remove(attach);
+            }
+        }
+    }
 
     public void TargetDraw() {
 
         for (ImageView imageView : imageViews) {
-            imageView.setVisibility(View.VISIBLE);
+          //  imageView.setVisibility(View.VISIBLE);
             imageView.setImageResource(android.R.color.transparent);
         }
         attachments.clear();
@@ -313,6 +325,10 @@ public final class Publication extends AppCompatActivity
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                for (ImageView img:imageViews) {
+                    img.setVisibility(View.GONE);
+                };
+
                 Snackbar.make(v, " Model: " + beautiful.getFirst_name() + " " + beautiful.getLast_name() + "  <3", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
 
@@ -376,6 +392,7 @@ public final class Publication extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... voids) {
+            RemoveNullAttachment();
             GetCountDelayPosts();
             publish_date += 1800;
             VKRequest post;
