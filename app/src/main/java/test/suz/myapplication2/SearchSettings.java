@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApiConst;
@@ -34,6 +37,7 @@ public class SearchSettings extends AppCompatActivity {
     long date;
     Intent intent = new Intent();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +54,9 @@ public class SearchSettings extends AppCompatActivity {
 
         getParamsFromActivity();
         AdminInfo();
+
+
+
 
 
     }

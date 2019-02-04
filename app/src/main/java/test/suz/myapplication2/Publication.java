@@ -23,6 +23,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -72,6 +74,8 @@ public final class Publication extends AppCompatActivity
     int girlId;
     String fName, lName;
 
+    private AdView mAdView;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -111,6 +115,11 @@ public final class Publication extends AppCompatActivity
 
         BeforeStartCheck();
 
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
     }
 
     @Override
@@ -137,12 +146,14 @@ public final class Publication extends AppCompatActivity
 
     public void GetCountDelayPosts() {
 
+
         VKRequest count = VKApi.wall().get(VKParameters.from(
                 VKApiConst.OWNER_ID, groupId,
                 "filter", "postponed",
                 VKApiConst.COUNT, 1,
                 VKApiConst.ACCESS_TOKEN, VKAccessToken.currentToken()
         ));
+
         count.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -165,35 +176,50 @@ public final class Publication extends AppCompatActivity
 
     public void ImageOnClickListener() {
 
-        for (int i = 0; i < imageViews.length; i++) {
+        imageViews[0].setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                view.setVisibility(View.GONE);
+                attachments.remove(0);
+                Toast.makeText(getApplicationContext(), "Photo has been deleted", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+        imageViews[1].setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                view.setVisibility(View.GONE);
+                attachments.remove(1);
+                Toast.makeText(getApplicationContext(), "Photo has been deleted", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+        imageViews[2].setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                view.setVisibility(View.GONE);
+                attachments.remove(2);
+                Toast.makeText(getApplicationContext(), "Photo has been deleted", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+        imageViews[3].setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                view.setVisibility(View.GONE);
+                attachments.remove(3);
+                Toast.makeText(getApplicationContext(), "Photo has been deleted", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
 
-            final int _i = i;
-            imageViews[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
 
-                    final Dialog dialog;
-                    dialog = new Dialog(Publication.this);
-
-                    dialog.setContentView(R.layout.dialog_view);
-                    ImageView imageZoom = dialog.findViewById(R.id.Image_zoom);
-                    Picasso.get().load(photoUrls[_i]).into(imageZoom);
-                    dialog.show();
-                    imageZoom.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                }
-            });
-        }
     }
 
     public void TargetDraw() {
 
         for (ImageView imageView : imageViews) {
+            imageView.setVisibility(View.VISIBLE);
             imageView.setImageResource(android.R.color.transparent);
         }
         attachments.clear();
@@ -210,6 +236,8 @@ public final class Publication extends AppCompatActivity
         attachments = beautiful.getVkAttachments();
         start_pos++;
         beautiful = new Woman(f_people, start_pos, imageViews, false);
+
+
     }
 
     public boolean isUserAdmin() {
@@ -265,7 +293,6 @@ public final class Publication extends AppCompatActivity
                 VKApiConst.HAS_PHOTO, 1,
                 VKApiConst.SORT, _user_popular,
                 VKApiConst.COUNT, girlsInUse,
-                // рандомизировать по Birtday запроc
                 VKApiConst.BIRTH_DAY, r.nextInt(28)
                 )
 
@@ -281,12 +308,15 @@ public final class Publication extends AppCompatActivity
         });
     }
 
+
     public void ButtonOnClickListener() {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Snackbar.make(v, " Model: " + beautiful.getFirst_name() + " " + beautiful.getLast_name() + "  <3", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
+
+
                 TargetDraw();
             }
         });

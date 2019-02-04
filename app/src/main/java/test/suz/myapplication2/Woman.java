@@ -53,7 +53,7 @@ public class Woman {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                JSONObject photo; // TODO убрать лишние объекты, можно обойтись одним !!! Убрал
+                JSONObject photo;
                 try {
 
                     for (int i = 0; i < photoCount; i++) {
