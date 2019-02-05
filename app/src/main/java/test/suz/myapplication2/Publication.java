@@ -217,21 +217,11 @@ public final class Publication extends AppCompatActivity
 
 
     }
-    public void RemoveNullAttachment()
-    {
-        for ( VKAttachments.VKApiAttachment attach:attachments
-             ) {
-            if(attach==null)
-            {
-                attachments.remove(attach);
-            }
-        }
-    }
 
     public void TargetDraw() {
 
         for (ImageView imageView : imageViews) {
-          //  imageView.setVisibility(View.VISIBLE);
+            //  imageView.setVisibility(View.VISIBLE);
             imageView.setImageResource(android.R.color.transparent);
         }
         attachments.clear();
@@ -325,9 +315,10 @@ public final class Publication extends AppCompatActivity
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (ImageView img:imageViews) {
+                for (ImageView img : imageViews) {
                     img.setVisibility(View.GONE);
-                };
+                }
+                ;
 
                 Snackbar.make(v, " Model: " + beautiful.getFirst_name() + " " + beautiful.getLast_name() + "  <3", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
@@ -392,7 +383,6 @@ public final class Publication extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... voids) {
-            RemoveNullAttachment();
             GetCountDelayPosts();
             publish_date += 1800;
             VKRequest post;
@@ -413,25 +403,34 @@ public final class Publication extends AppCompatActivity
                         VKApiConst.ATTACHMENTS, attachments
                 ));
 
-            post.executeWithListener(new VKRequest.VKRequestListener()
+            try {
+                for (int i=0;i<attachments.size();i++)
+                    if(attachments.get(i)==null)
+                        attachments.remove(i);
 
-            {
-                @Override
-                public void onComplete(VKResponse response) {
-                    super.onComplete(response);
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            "Добавлено в очередь!", Toast.LENGTH_LONG);
-                    toast.show();
-                    TargetDraw();
-                }
+                post.executeWithListener(new VKRequest.VKRequestListener()
 
-                @Override
-                public void onError(VKError error) {
-                    super.onError(error);
-                    publish_date += 3600;
-                    new PostProcess().execute(); //
-                }
-            });
+                {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        super.onComplete(response);
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "Добавлено в очередь!", Toast.LENGTH_LONG);
+                        toast.show();
+                        TargetDraw();
+                    }
+
+                    @Override
+                    public void onError(VKError error) {
+                        super.onError(error);
+                        publish_date += 3600;
+                        new PostProcess().execute(); //
+                    }
+                });
+            } catch (Exception e) {
+                TargetDraw();
+            }
+
             return null;
         }
 
