@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.squareup.picasso.Picasso;
@@ -120,6 +121,8 @@ public final class Publication extends AppCompatActivity
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
+
 
     }
 
@@ -382,7 +385,7 @@ public final class Publication extends AppCompatActivity
 
 
         @Override
-        protected Void doInBackground(Void... voids) {
+            protected Void doInBackground(Void... voids) {
             GetCountDelayPosts();
             publish_date += 1800;
             VKRequest post;

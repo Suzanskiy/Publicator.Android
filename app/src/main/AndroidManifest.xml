@@ -1,12 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018.
   ~ Sergey Suzanskyi
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="test.suz.myapplication2">
-
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -38,14 +35,26 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <meta-data
-
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-9435132814188187~2053004425"/>
+            android:value="ca-app-pub-9435132814188187~2053004425" />
+
+        <activity
+            android:name=".Secont_Ma"
+            android:label="@string/title_activity_secont__ma"
+            android:theme="@style/AppTheme.NoActionBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
