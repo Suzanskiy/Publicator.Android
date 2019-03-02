@@ -222,7 +222,7 @@ public final class Publication extends AppCompatActivity
     }
 
     public void TargetDraw() {
-
+/*
         for (ImageView imageView : imageViews) {
             //  imageView.setVisibility(View.VISIBLE);
             imageView.setImageResource(android.R.color.transparent);
@@ -241,7 +241,7 @@ public final class Publication extends AppCompatActivity
         attachments = beautiful.getVkAttachments();
         start_pos++;
         beautiful = new Woman(f_people, start_pos, imageViews, false);
-
+*/
 
     }
 
@@ -321,7 +321,7 @@ public final class Publication extends AppCompatActivity
                 for (ImageView img : imageViews) {
                     img.setVisibility(View.GONE);
                 }
-                ;
+
 
                 Snackbar.make(v, " Model: " + beautiful.getFirst_name() + " " + beautiful.getLast_name() + "  <3", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();

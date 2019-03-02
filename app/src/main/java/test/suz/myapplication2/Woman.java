@@ -20,9 +20,11 @@ import com.vk.sdk.api.model.VKAttachments;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class Woman {
 
-    String[] url_photo604 = new String[4];
+    ArrayList<String> url_photo604 = new ArrayList<>();
     VKAttachments attachments = new VKAttachments();
     private int id;
     private String last_name;
@@ -30,7 +32,7 @@ public class Woman {
     private int photoCount = 4;
 
 
-    public Woman(VKResponse response1000, int index, final ImageView[] imgs, final boolean draw) {
+    public Woman(VKResponse response1000, int index) {
 
         try {
             JSONObject temp = response1000.json.getJSONObject("response").getJSONArray("items").getJSONObject(index);
@@ -59,9 +61,9 @@ public class Woman {
 
                     for (int i = 0; i < photoCount; i++) {
                         photo = response.json.getJSONObject("response").getJSONArray("items").getJSONObject(i);
-                        url_photo604[i] = photo.getString("photo_604");
+                        url_photo604.add(photo.getString("photo_604"));
                         attachments.add(new VKApiPhoto(photo));
-
+/*
                         Picasso.get().load(url_photo604[i]).fetch(new Callback() {
                             @Override
                             public void onSuccess() {
@@ -74,6 +76,7 @@ public class Woman {
 
                             }
                         });
+                        */
 
                     }
 
@@ -86,7 +89,7 @@ public class Woman {
     public VKAttachments getVkAttachments() {
         return attachments;
     }
-
+/*
     public void Show(ImageView[] imgs) {
         for (int i = 0; i < photoCount; i++) {
             imgs[i].setVisibility(View.VISIBLE);
@@ -94,6 +97,7 @@ public class Woman {
         }
 
     }
+    */
 
     public int getId() {
         return id;

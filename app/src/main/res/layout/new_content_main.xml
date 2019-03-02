@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-    android:id="@+id/linearLayout2"
+    android:id="@+id/first_row"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginStart="8dp"
@@ -18,7 +18,7 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+    app:layout_constraintTop_toBottomOf="@+id/second_row">
 
     <ImageView
         android:id="@+id/img_1"
@@ -40,7 +40,7 @@
 </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/second_row"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
@@ -48,7 +48,7 @@
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/first_row"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

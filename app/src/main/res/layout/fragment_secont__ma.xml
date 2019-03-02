@@ -9,8 +9,18 @@
     android:orientation="vertical"
     tools:context=".Secont_Ma$PlaceholderFragment">
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_weight="0"
+        android:visibility="gone"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id"></com.google.android.gms.ads.AdView>
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/first_row"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
@@ -21,37 +31,29 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/second_row">
 
         <ImageView
             android:id="@+id/img_1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_ab_app" />
 
         <ImageView
-            android:id="@+id/img_2"
+            android:id="@+id/img_3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_ab_app" />
     </LinearLayout>
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_weight="0"></com.google.android.gms.ads.AdView>
+
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/second_row"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
@@ -59,17 +61,17 @@
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/first_row"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/img_3"
+            android:id="@+id/img_2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_ab_app" />
 
@@ -78,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_ab_app" />
     </LinearLayout>
@@ -90,6 +92,7 @@
         android:orientation="horizontal">
 
         <android.support.design.widget.BottomNavigationView
+            android:id="@+id/navigation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:elevation="0dp"
