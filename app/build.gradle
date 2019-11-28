@@ -7,8 +7,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    defaultConfig {
+        defaultConfig {
+        compileSdkVersion 27
         applicationId "test.suz.myapplication2"
         minSdkVersion 19
         targetSdkVersion 27
